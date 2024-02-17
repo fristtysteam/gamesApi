@@ -78,8 +78,7 @@ namespace gamesApi.Repositories
                 return false;
             }
 
-            try
-            {
+          
                 var existingGame = await _context.Games.FirstOrDefaultAsync(g => g.GameId == id);
 
                 if (existingGame == null)
@@ -97,11 +96,9 @@ namespace gamesApi.Repositories
 
                 return true;
             }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
+           
+            
+        
         public async Task<GameDto> CreateGame(GameDto newGame)
         {
             try

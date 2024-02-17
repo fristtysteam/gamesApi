@@ -1,5 +1,7 @@
 ﻿using gamesApi.Models;
 using gamesApi.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,7 +19,9 @@ namespace gamesApi.Controllers
             _gamesRepository = gamesRepository;
         }
 
-        // GET: api/Game
+        // GET
+        //AUTHORIZED FOR ADMINS, FUNCTIONALITY IN PROGRAM.CS
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Standard, Administrator")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Game>>> GetGames()
         {
@@ -27,7 +31,10 @@ namespace gamesApi.Controllers
             return result;
         }
 
-        // GET: api/Game/5
+        // GET {id}
+        //AUTHORIZED FOR ADMINS, FUNCTIONALITY IN PROGRAM.CS
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Standard, Administrator")]
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetGameById(int id)
         {
@@ -42,11 +49,15 @@ namespace gamesApi.Controllers
             }
         }
 
-        // PUT: api/Game/5
+        // PUT
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+
+        //AUTHORIZED FOR ADMINS, FUNCTIONALITY IN PROGRAM.CS
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrator")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateGameById(int id, GameDto updatedGame)
         {
+
             if (id != updatedGame.GameId)
             {
                 return BadRequest("The provided id in the URL does not match the GameId in the payload.");
@@ -64,8 +75,10 @@ namespace gamesApi.Controllers
             }
         }
 
-        // POST: api/Game
+        // POST
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        //AUTHORIZED FOR ADMINS, FUNCTIONALITY IN PROGRAM.CS
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrator")]
         [HttpPost]
         public async Task<ActionResult<GameDto>> CreateGame([FromBody] GameDto newGameDto)
         {
@@ -87,7 +100,9 @@ namespace gamesApi.Controllers
                 return Problem($"An error occurred while creating the game: {ex.Message}");
             }
         }
-        // DELETE: api/Game/5
+        // DELETE
+        //AUTHORIZED FOR ADMINS, FUNCTIONALITY IN PROGRAM.CS
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrator")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteGame(int id)
         {

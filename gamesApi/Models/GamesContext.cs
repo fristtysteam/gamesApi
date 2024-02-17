@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using gamesApi.Models;
 
 namespace gamesApi.Models
 {
@@ -143,9 +144,32 @@ namespace gamesApi.Models
                           PublisherName = "CD Projekt RED"
                       }
                 );
-           
+
+            modelBuilder.Entity<User>()
+               .HasData(
+                   new User
+                   {
+                       Id = 1,
+                       Username = "John",
+                       Email ="John@gmail.com",
+                       Password = "johnpassword",
+                       Role = "Administrator"
+
+                   },
+                    new User
+                    {
+                        Id = 2,
+                        Username = "Jeff",
+                        Email = "Jeff@gmail.com",
+                        Password = "jeffpassword",
+                        Role = "Standard"
+                    }
+               );
+
 
             base.OnModelCreating(modelBuilder);
         }
+
+        public DbSet<gamesApi.Models.User>? User { get; set; }
     }
 }

@@ -10,8 +10,5 @@ namespace gamesApi.Repositories
         public Task<bool> UpdateGameByID(int id, GameDto updatedGame);
         public Task<GameDto> CreateGame(GameDto newGame);
 
-
-
-
     }
 }
