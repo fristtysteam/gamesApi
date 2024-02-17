@@ -15,6 +15,9 @@ namespace gamesApi.Models
         public DbSet<Game> Games { get; set; } = null;
         public DbSet<Publisher> Publisher { get; set; } = null;
 
+        public DbSet<User> User { get; set; } = null;
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
@@ -170,6 +173,5 @@ namespace gamesApi.Models
             base.OnModelCreating(modelBuilder);
         }
 
-        public DbSet<gamesApi.Models.User>? User { get; set; }
     }
 }

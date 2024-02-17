@@ -33,42 +33,10 @@ namespace gamesApi.Controllers
 
 // POST: api/Users/login
 [HttpPost("login")]
-[ProducesResponseType(StatusCodes.Status200OK)]
-[ProducesResponseType(StatusCodes.Status404NotFound)]
-public IActionResult Login(UserLogin user)
-{
-    if (string.IsNullOrEmpty(user.Username) || string.IsNullOrEmpty(user.Password))
-    {
-        return BadRequest("Username or password is empty");
-    }
+      
 
-    var loggedInUser = _userService.Get(user);
-    if (loggedInUser == null)
-    {
-        return NotFound("User not found");
-    }
-
-    var tokenHandler = new JwtSecurityTokenHandler();
-    var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
-    var tokenDescriptor = new SecurityTokenDescriptor
-    {
-        Subject = new ClaimsIdentity(new Claim[]
-        {
-                    new Claim(ClaimTypes.NameIdentifier, loggedInUser.Username),
-                    new Claim(ClaimTypes.Email, loggedInUser.Email),
-                    new Claim(ClaimTypes.Role, loggedInUser.Role)
-        }),
-        Expires = DateTime.UtcNow.AddHours(1), // Token expiration time
-        SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-    };
-    var token = tokenHandler.CreateToken(tokenDescriptor);
-    var tokenString = tokenHandler.WriteToken(token);
-
-    return Ok(tokenString);
-}
-
-// GET: api/Users
-[HttpGet]
+        // GET: api/Users
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUser()
         {
           if (_context.User == null)
