@@ -19,7 +19,10 @@ namespace gamesApi.Models
 
         public DbSet<User> User { get; set; } = null;
 
-
+        /// <summary>
+        /// The data to be stored locally
+        /// </summary>
+        /// <param name="modelBuilder"></param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
