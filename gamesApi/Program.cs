@@ -9,16 +9,26 @@ using System.Text.Json.Serialization;
 using System.Text;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Reflection;
 
 
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add DbContext
 builder.Services.AddDbContext<GamesContext>(opt =>
             opt.UseInMemoryDatabase("GamesList"));
 
-        builder.Services.AddSwaggerGen(options =>
+//Link to gamesApi.xml to add documentation to Swagger
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "gamesApi", Version = "v1" });
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    c.IncludeXmlComments(xmlPath);
+});
+builder.Services.AddSwaggerGen(options =>
         {
             options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
@@ -77,19 +87,33 @@ builder.Services.AddScoped<IGamesRepository, GamesRepository>();
 var app = builder.Build();
 
 
+
 app.UseSwagger();
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwaggerUI(c =>
+    {
+        c.InjectStylesheet("/css/custom.css");
+
+
+    });
+    app.UseStaticFiles();
+}
+
 app.UseAuthorization();
 app.UseAuthentication();
 
-app.MapPost("/login",
+
+app.MapPost("/Get Authorization Token",
 (UserLogin user, IUserService service) => Login(user, service))
     .Accepts<UserLogin>("application/json")
     .Produces<string>();
+    
+    
 
-// Add authorization
 builder.Services.AddAuthorization();
 
-        // Add UserService and GamesRepository
+
         IResult Login(UserLogin user, IUserService service)
         {
             if (!string.IsNullOrEmpty(user.Username) &&
@@ -125,23 +149,19 @@ builder.Services.AddAuthorization();
         }
 
 
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI();
-        }
 
-        app.UseHttpsRedirection();
-        app.UseRouting();
 
-        app.UseAuthentication();
+app.UseHttpsRedirection();
+app.UseRouting();
 
-        app.UseAuthorization();
+app.UseAuthentication();
+app.UseAuthorization();
 
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapControllers();
-        });
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+});
 
-        app.Run();
+
+app.Run();
  

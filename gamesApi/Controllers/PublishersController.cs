@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
 using gamesApi.Models;
+using gamesApi.Repositories;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 
 namespace gamesApi.Controllers
 {
@@ -13,129 +12,82 @@ namespace gamesApi.Controllers
     [ApiController]
     public class PublishersController : ControllerBase
     {
-        private readonly GamesContext _context;
+        private readonly IPublisherRepository _publisherRepository;
 
-        public PublishersController(GamesContext context)
+        public PublishersController(IPublisherRepository publisherRepository)
         {
-            _context = context;
+            _publisherRepository = publisherRepository;
         }
 
         // GET: api/Publishers
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Publisher>>> GetPublisher()
+        //Authorised for standard users, If removed u dont need JWT key to use but Its more fun this way
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Standard, Administrator")]
+
+        public async Task<ActionResult<IEnumerable<PublisherDto>>> GetPublishers()
         {
-          if (_context.Publisher == null)
-          {
-              return NotFound();
-          }
-            var publishers = await _context.Publisher
-                .Select(p => new PublisherDto(p.PublisherId)
-                {
-
-                    PublisherName = p.PublisherName,
-
-                    //CODE TO SHOW GAMES PER PUBLISHER WHEN USING GET
-                    /*PublisherGames = p.PublisherGames.Select(g =>
-                        new GameDto(g.GameId,g.PublisherId) 
-                        {
-                            GameName = g.GameName,
-                            GameDescription = g.GameDescription,
-                            ReleaseDate = g.ReleaseDate,
-                            Genre = g.Genre
-                        }).ToList()*/
-                })
-                .ToListAsync();
-
+            var publishers = await _publisherRepository.GetPublishers();
             return Ok(publishers);
         }
 
         // GET: api/Publishers/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Publisher>> GetPublisher(int id)
-        {
-          if (_context.Publisher == null)
-          {
-              return NotFound();
-          }
-            var publisher = await _context.Publisher.FindAsync(id);
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Standard, Administrator")]
 
+        public async Task<ActionResult<PublisherDto>> GetPublisher(int id)
+        {
+            var publisher = await _publisherRepository.GetPublisherById(id);
             if (publisher == null)
             {
                 return NotFound();
             }
 
-            return publisher;
+            return Ok(publisher);
         }
 
         // PUT: api/Publishers/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPublisher(int id, Publisher publisher)
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrator")]
+
+        public async Task<IActionResult> PutPublisher(int id, PublisherDto publisher)
         {
-            if (id != publisher.PublisherId)
+            var result = await _publisherRepository.UpdatePublisher(id, publisher);
+            if (!result)
             {
-                return BadRequest();
-            }
-
-            _context.Entry(publisher).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!PublisherExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return NotFound();
             }
 
             return NoContent();
         }
 
         // POST: api/Publishers
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Publisher>> PostPublisher(Publisher publisher)
-        {
-          if (_context.Publisher == null)
-          {
-              return Problem("Entity set 'GamesContext.Publisher'  is null.");
-          }
-            _context.Publisher.Add(publisher);
-            await _context.SaveChangesAsync();
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrator")]
 
-            return CreatedAtAction(nameof(GetPublisher), new { id = publisher.PublisherId }, publisher); 
+        public async Task<ActionResult<PublisherDto>> PostPublisher(PublisherDto publisher)
+        {
+            var result = await _publisherRepository.AddPublisher(publisher);
+            if (!result)
+            {
+                return BadRequest();
+            }
+
+            return CreatedAtAction(nameof(GetPublisher), new { id = publisher.PublisherId }, publisher);
         }
 
         // DELETE: api/Publishers/5
         [HttpDelete("{id}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrator")]
+
         public async Task<IActionResult> DeletePublisher(int id)
         {
-            if (_context.Publisher == null)
+            var result = await _publisherRepository.DeletePublisher(id);
+            if (!result)
             {
                 return NotFound();
             }
-            var publisher = await _context.Publisher.FindAsync(id);
-            if (publisher == null)
-            {
-                return NotFound();
-            }
-
-            _context.Publisher.Remove(publisher);
-            await _context.SaveChangesAsync();
 
             return NoContent();
-        }
-
-        private bool PublisherExists(int id)
-        {
-            return (_context.Publisher?.Any(e => e.PublisherId == id)).GetValueOrDefault();
         }
     }
 }

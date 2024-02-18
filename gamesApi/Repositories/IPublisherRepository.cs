@@ -9,5 +9,7 @@ namespace gamesApi.Repositories
         public Task<PublisherDto> GetPublisherById(int id);
         public Task<bool> UpdatePublisher(int id, PublisherDto updatedPublisher);
         public Task<bool> AddPublisher(PublisherDto newPublisher);
+        public Task<bool> DeletePublisher(int id);
+
     }
 }

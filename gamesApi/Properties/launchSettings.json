@@ -11,6 +11,7 @@
   "profiles": {
     "gamesApi": {
       "commandName": "Project",
+      "description": "This is a simple game api",
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "launchUrl": "swagger",

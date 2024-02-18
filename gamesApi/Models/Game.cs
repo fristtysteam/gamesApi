@@ -29,6 +29,13 @@ namespace gamesApi.Models
         [MaxLength(50)]
         public string Genre { get; set; }
 
+      //  public string? ImageUrl { get; set; }
+        //dotnet add package Microsoft.EntityFrameworkCore.Design
+        //dotnet tool install --global dotnet-ef
+        //dotnet ef migrations add AddImageUrlToGame
+        //dotnet ef database update
+
+
         [ForeignKey(nameof(Publisher))]        
         public int PublisherId { get; set; }
 

@@ -25,6 +25,8 @@ namespace gamesApi.Models
 
         [MaxLength(50)]
         public string Genre { get; set; }
+       // public string? ImageUrl { get; set; }
+
 
 
         [ForeignKey(nameof(Publisher))]

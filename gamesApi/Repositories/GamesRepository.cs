@@ -11,6 +11,7 @@ namespace gamesApi.Repositories
 
         private readonly GamesContext _context;
 
+
         public GamesRepository(GamesContext context)
         {
             _context = context;
@@ -22,23 +23,26 @@ namespace gamesApi.Repositories
             {
                 return null;
             }
+
             var games = await _context.Games.Select(t =>
-        new GameDto(t.GameId, t.PublisherId)
-        {
+                new GameDto(t.GameId, t.PublisherId)
+                {
+                    GameDescription = t.GameDescription,
+                    GameName = t.GameName,
+                    Genre = t.Genre,
+                    ReleaseDate = t.ReleaseDate,
+                    //ImageUrl = t.ImageUrl
+                }
+            ).ToListAsync();
 
-            GameDescription = t.GameDescription,
-            GameName = t.GameName,
-            Genre = t.Genre,
-            ReleaseDate = t.ReleaseDate,
-
-        }
-        ).ToListAsync();
             if (games != null)
             {
                 return games;
             }
+
             return null;
         }
+
 
         public async Task<GameDto> GetGameById(int id)
         {
@@ -109,7 +113,6 @@ namespace gamesApi.Repositories
                     GameDescription = newGame.GameDescription,
                     Genre = newGame.Genre,
                     ReleaseDate = newGame.ReleaseDate,
-                    PublisherId = newGame.PublisherId
                 };
 
                 _context.Games.Add(game);
@@ -121,7 +124,6 @@ namespace gamesApi.Repositories
                     GameDescription = game.GameDescription,    
                     Genre = game.Genre,
                     ReleaseDate = game.ReleaseDate,
-                    PublisherId = game.PublisherId
                     
 
                 };

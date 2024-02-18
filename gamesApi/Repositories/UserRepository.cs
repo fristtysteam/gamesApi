@@ -1,6 +1,25 @@
-﻿namespace gamesApi.Repositories
+﻿using gamesApi.Models;
+using Microsoft.EntityFrameworkCore;
+
+namespace gamesApi.Repositories
 {
     public class UserRepository
     {
+        private readonly GamesContext _context;
+
+        public UserRepository(GamesContext context)
+        {
+            _context = context;
+        }
+        public async Task<bool> DeleteUser(int id)
+        {
+            var user = await _context.User.FindAsync(id);
+            if (user == null)
+                return false;
+
+            _context.User.Remove(user);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }
