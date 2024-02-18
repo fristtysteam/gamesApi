@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace gamesApi.Repositories
 {
-    public class UserRepository
+    public class UserRepository : IUserRepository
     {
         private readonly GamesContext _context;
 
@@ -21,5 +21,6 @@ namespace gamesApi.Repositories
             await _context.SaveChangesAsync();
             return true;
         }
+    
     }
 }

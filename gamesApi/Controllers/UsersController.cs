@@ -24,18 +24,19 @@ namespace gamesApi.Controllers
     {
         private readonly GamesContext _context;
         private readonly IConfiguration _configuration;
-        private readonly IUserService _userService;
         private readonly IUserRepository _userRepository;
 
-        public UsersController(GamesContext context, IConfiguration configuration, IUserService userService, IUserRepository userRepository)
+        public UsersController(GamesContext context, IConfiguration configuration, IUserRepository userRepository)
 {
     _context = context;
     _configuration = configuration;
-    _userService = userService;
     _userRepository = userRepository;
 }
-
-        // DELETE: api/Users/5
+        /// <summary>
+        /// Deletes a user 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Message declaring wheter a user has been deleted or doesnt exist</returns>
         [HttpDelete("{id}")]
         //Only admins should be able to delete users.
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrator")]
@@ -48,7 +49,7 @@ namespace gamesApi.Controllers
                 return NotFound();
             }
 
-            return NoContent();
+            return Ok("User has been deleted");
         }
     }
 

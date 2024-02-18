@@ -20,6 +20,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<GamesContext>(opt =>
             opt.UseInMemoryDatabase("GamesList"));
 
+
+
 //Link to gamesApi.xml to add documentation to Swagger
 builder.Services.AddSwaggerGen(c =>
 {
@@ -55,10 +57,10 @@ builder.Services.AddSwaggerGen(options =>
             });
         });
 
-        builder.Services.AddControllers().AddJsonOptions(options =>
-        {
-            options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
-        });
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = null;
+});
 
 
 
@@ -82,6 +84,9 @@ builder.Services.AddAuthorization();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IGamesRepository, GamesRepository>();
+builder.Services.AddScoped<IPublisherRepository, PublisherRepository>();
+builder.Services.AddScoped<IUserRepository,UserRepository>();
+
 
 
 var app = builder.Build();
@@ -108,8 +113,8 @@ app.MapPost("/Get Authorization Token",
 (UserLogin user, IUserService service) => Login(user, service))
     .Accepts<UserLogin>("application/json")
     .Produces<string>();
-    
-    
+
+
 
 builder.Services.AddAuthorization();
 

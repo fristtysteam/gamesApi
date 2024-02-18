@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace gamesApi.Repositories
 {
-    public class PublisherRepository
+    public class PublisherRepository : IPublisherRepository
     {
         private readonly GamesContext _context;
 
@@ -14,6 +14,7 @@ namespace gamesApi.Repositories
 
         public async Task<List<PublisherDto>> GetPublishers()
         {
+          
             var publishers = await _context.Publisher
                 .Select(p => new PublisherDto(p.PublisherId)
                 {
@@ -23,8 +24,14 @@ namespace gamesApi.Repositories
                 })
                 .ToListAsync();
 
-            return publishers;
+            if (publishers != null)
+            {
+                return publishers;
+            }
+            return null;
         }
+        
+
 
         public async Task<PublisherDto> GetPublisherById(int id)
         {

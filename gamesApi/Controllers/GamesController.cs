@@ -73,8 +73,7 @@ namespace gamesApi.Controllers
         /// Creates a new game.
         /// </summary>
         /// <param name="newGameDto">The data for the new game.</param>
-        [HttpPost]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrator")]
+    
         [HttpPost]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrator")]
         public async Task<ActionResult<GameDto>> CreateGame(GameDto newGameDto)

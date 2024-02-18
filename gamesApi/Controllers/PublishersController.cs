@@ -19,18 +19,24 @@ namespace gamesApi.Controllers
             _publisherRepository = publisherRepository;
         }
 
-        // GET: api/Publishers
-        [HttpGet]
         //Authorised for standard users, If removed u dont need JWT key to use but Its more fun this way
+
+        /// <summary>
+        /// Get all Publishers
+        /// </summary>
+        [HttpGet]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Standard, Administrator")]
 
         public async Task<ActionResult<IEnumerable<PublisherDto>>> GetPublishers()
         {
-            var publishers = await _publisherRepository.GetPublishers();
-            return Ok(publishers);
+            var publishers = _publisherRepository.GetPublishers();
+            return Ok(publishers.Result.ToArray());
         }
 
-        // GET: api/Publishers/5
+        /// <summary>
+        /// Gets one Specific Publisher by their Id      
+        /// </summary>
+        /// <param name="id">ID</param>
         [HttpGet("{id}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Standard, Administrator")]
 
@@ -45,7 +51,12 @@ namespace gamesApi.Controllers
             return Ok(publisher);
         }
 
-        // PUT: api/Publishers/5
+        /// <summary>
+        /// Updates The Publisher by their ID
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="publisher"></param>
         [HttpPut("{id}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrator")]
 
@@ -57,10 +68,14 @@ namespace gamesApi.Controllers
                 return NotFound();
             }
 
-            return NoContent();
+            return Ok("Publisher has been Updated");
         }
 
-        // POST: api/Publishers
+        /// <summary>
+        /// Creates a Publisher
+        /// 
+        /// </summary>
+        /// <param name="publisher"></param>
         [HttpPost]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrator")]
 
@@ -75,7 +90,10 @@ namespace gamesApi.Controllers
             return CreatedAtAction(nameof(GetPublisher), new { id = publisher.PublisherId }, publisher);
         }
 
-        // DELETE: api/Publishers/5
+        /// <summary>
+        /// Detetes a Publisher
+        /// </summary>
+        /// <param name="id"></param>
         [HttpDelete("{id}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrator")]
 
@@ -87,7 +105,7 @@ namespace gamesApi.Controllers
                 return NotFound();
             }
 
-            return NoContent();
+            return Ok("Publisher has been deleted");
         }
     }
 }
